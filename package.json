@@ -1,0 +1,17 @@
+{
+  "name": "bgp-route-policy-simulator",
+  "version": "1.0.0",
+  "description": "模拟 BGP 路由策略、前缀过滤和邻居故障后的收敛结果",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "bgp-sim": "./bin/simulate.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

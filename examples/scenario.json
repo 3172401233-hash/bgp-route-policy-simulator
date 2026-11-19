@@ -1,0 +1,36 @@
+{
+  "routers": [
+    { "id": "R1", "as": 65001 },
+    { "id": "R2", "as": 65002 },
+    { "id": "R3", "as": 65003 },
+    { "id": "R4", "as": 65004 }
+  ],
+  "links": [
+    { "a": "R1", "b": "R2", "aPolicy": { "export": "RM-PREPEND" } },
+    { "a": "R2", "b": "R3" },
+    { "a": "R3", "b": "R4", "bPolicy": { "import": "RM-FILTER" } }
+  ],
+  "prefixLists": {
+    "PL-BLOCK": [
+      { "sequence": 10, "prefix": "10.0.0.0/8", "action": "deny", "ge": 24, "le": 32 }
+    ]
+  },
+  "routeMaps": {
+    "RM-FILTER": [
+      { "sequence": 10, "action": "deny", "match": { "prefixList": "PL-BLOCK" } },
+      { "sequence": 20, "action": "permit" }
+    ],
+    "RM-PREPEND": [
+      { "action": "permit", "set": { "asPathPrepend": 1, "communityAdd": ["65002:100"] } }
+    ]
+  },
+  "announce": [
+    { "router": "R1", "prefix": "10.0.0.0/24" },
+    { "router": "R1", "prefix": "192.168.1.0/24" }
+  ],
+  "steps": [
+    { "type": "fail", "a": "R3", "b": "R4" },
+    { "type": "restore", "a": "R3", "b": "R4" },
+    { "type": "announce", "router": "R4", "prefix": "172.16.0.0/16", "attributes": { "med": 20 } }
+  ]
+}
